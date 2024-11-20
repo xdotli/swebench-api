@@ -1,0 +1,19 @@
+services:
+  openhands-swebench:
+    build: .
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - MODEL_CONFIG=llm.claude-3-5-sonnet
+      - MODEL_NAME=claude-3-5-sonnet-20241022
+      - EVAL_LIMIT=1
+      - MAX_ITER=5
+      - NUM_WORKERS=1
+      - DATASET=princeton-nlp/SWE-bench_Lite_bm25_13K
+      - DATASET_SPLIT=test
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config.toml:/app/config.toml
+      - ./outputs:/app/evaluation/evaluation_outputs
+    network_mode: "host"
+    privileged: true

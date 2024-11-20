@@ -1,0 +1,12 @@
+
+[llm]
+# Model to use
+model = "gpt-4o"
+
+[llm.gpt4o-mini]
+api_key = "your-api-key"
+model = "gpt-4o"
+
+[llm.claude-3-5-sonnet]
+api_key = "Your-Anthropic-API-Key"
+model = "anthropic/claude-3-5-sonnet-20241022"

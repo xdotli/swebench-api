@@ -1,0 +1,6 @@
+OpenHands/.
+SWE-bench/.
+docker-compose/outputs/
+
+.DS_Store
+.env
