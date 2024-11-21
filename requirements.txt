@@ -1,0 +1,8 @@
+fastapi>=0.68.0
+uvicorn>=0.15.0
+pydantic>=1.8.0
+datasets>=2.0.0
+swebench
+python-multipart
+docker>=6.0.0
+requests>=2.25.1 
