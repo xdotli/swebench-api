@@ -96,3 +96,5 @@ evaluation/evaluation_outputs
 evaluation/outputs
 evaluation/*/eval_workspace*
 evaluation/*/data
+
+dataset_cache/

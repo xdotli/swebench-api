@@ -20,6 +20,10 @@ class SWEBenchService:
                 cache_dir=str(cache_dir)
             )
             print(f"Dataset loaded successfully with {len(self.dataset)} instances")
+            # print(f'Dataset sample: {self.dataset[0]}')
+            # Get columns of the dataset
+            dataset_columns = self.dataset.column_names
+            print("Dataset columns:", dataset_columns)
             print("Available instance IDs (first 5):", [
                 item["instance_id"] for item in list(self.dataset)[:5]
             ])
@@ -42,13 +46,49 @@ class SWEBenchService:
             
         task = matching_tasks[0]
         
-        # Make sure all required fields are present
+        # Debug print
+        print(f"\nRaw task data for {task_id}:")
+        for key, value in task.items():
+            print(f"{key}: {value}")
+        
+        # Construct issue text from problem statement and hints
+        issue_text_parts = []
+        print(f'Task: {task}')
+        if task.get("problem_statement"):
+            print(f'Problem statement: {task["problem_statement"]}')
+            issue_text_parts.append(task["problem_statement"])
+        if task.get("hints_text"):
+            issue_text_parts.append("Additional Hints:\n" + task["hints_text"])
+        
+        issue_text = "\n\n".join(filter(None, issue_text_parts))
+        
+        # Get file paths from the patch field if available
+        file_paths = []
+        if task.get("patch"):
+            # Extract file paths from the patch
+            for line in task["patch"].split('\n'):
+                if line.startswith('diff --git'):
+                    # Extract the b/ path from diff --git a/path b/path
+                    file_path = line.split()[-1].lstrip('b/')
+                    file_paths.append(file_path)
+        
+        # Build context with all relevant information
+        context = {
+            "repo": task.get("repo", ""),
+            "created_at": task.get("created_at", ""),
+            "version": task.get("version", ""),
+            "test_patch": task.get("test_patch", ""),
+            "environment_setup_commit": task.get("environment_setup_commit", ""),
+            "FAIL_TO_PASS": task.get("FAIL_TO_PASS", ""),
+            "PASS_TO_PASS": task.get("PASS_TO_PASS", "")
+        }
+        
         return {
             "task_id": task["instance_id"],
-            "issue_text": task.get("issue_text", ""),  # Use get() with default value
+            "issue_text": issue_text,
             "base_commit": task.get("base_commit", ""),
-            "file_paths": task.get("file_paths", []),
-            "context": task.get("context", {})
+            "file_paths": file_paths,
+            "context": context
         }
 
     def get_multiple_tasks(self, task_ids: List[str]) -> List[Dict[str, Any]]:

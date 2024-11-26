@@ -14,6 +14,7 @@ swe_bench_service = SWEBenchService()
 
 @router.get("/tasks/{task_id}", response_model=TaskResponse)
 async def get_task(task_id: str):
+    # print(f'Getting task {task_id}')
     try:
         return swe_bench_service.get_task(task_id)
     except ValueError as e:

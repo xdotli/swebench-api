@@ -1,5 +1,7 @@
 import requests
 import json
+from openai import OpenAI
+import os
 
 BASE_URL = "http://localhost:8000"
 
@@ -11,7 +13,9 @@ def test_api():
     # Test getting a single task
     task_id = "sympy__sympy-24562"
     response = requests.get(f"{BASE_URL}/api/v1/tasks/{task_id}")
-    print(f"\nTask {task_id}:", json.dumps(response.json(), indent=2))
+    task_data = response.json()
+    # print('task_data', task_data)
+    print(f"\nTask {task_id}:", json.dumps(task_data, indent=2))
 
     # Test batch task retrieval
     task_ids = ["sympy__sympy-24562", "sympy__sympy-24562"]
@@ -21,8 +25,50 @@ def test_api():
     )
     print("\nBatch tasks:", json.dumps(response.json(), indent=2))
 
-    # Test single evaluation with a more realistic prediction
-    sample_prediction = """diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py
+    # Run inference using OpenAI API
+    if "OPENAI_API_KEY" in os.environ:
+        print("\nRunning inference with GPT-4...")
+        client = OpenAI()
+        
+        # Construct prompt
+        prompt = f"""Given this GitHub issue:
+{task_data['issue_text']}
+
+Base commit: {task_data['base_commit']}
+Files to modify: {', '.join(task_data['file_paths'])}
+
+Additional context: {json.dumps(task_data['context'], indent=2)}
+
+Please provide a patch in git diff format that resolves this issue.
+The patch should be applicable to the base commit.
+Only include the git diff, no additional explanation."""
+
+        # Get prediction from GPT-4
+        completion = client.chat.completions.create(
+            model="gpt-4-turbo-preview",  # or another model of your choice
+            messages=[
+                {"role": "system", "content": "You are a skilled software engineer. Provide patches in git diff format."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.2  # Lower temperature for more focused responses
+        )
+        
+        prediction = completion.choices[0].message.content
+        print(f"\nModel prediction:\n{prediction}")
+        
+        # Evaluate the prediction
+        response = requests.post(
+            f"{BASE_URL}/api/v1/evaluate",
+            json={
+                "task_id": task_id,
+                "prediction": prediction
+            }
+        )
+        print("\nEvaluation result:", json.dumps(response.json(), indent=2))
+    else:
+        print("\nSkipping inference (OPENAI_API_KEY not set)")
+        # Fall back to test prediction
+        sample_prediction = """diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py
 --- a/sympy/core/numbers.py
 +++ b/sympy/core/numbers.py
 @@ -100,6 +100,7 @@ class Number(AtomicExpr):
@@ -31,15 +77,15 @@ def test_api():
 +    def _eval_is_extended_real(self):
 +        return True
 """
-    
-    response = requests.post(
-        f"{BASE_URL}/api/v1/evaluate",
-        json={
-            "task_id": task_id,
-            "prediction": sample_prediction
-        }
-    )
-    print("\nEvaluation result:", json.dumps(response.json(), indent=2))
+        response = requests.post(
+            f"{BASE_URL}/api/v1/evaluate",
+            json={
+                "task_id": task_id,
+                "prediction": sample_prediction
+            }
+        )
+        print("\nEvaluation result (with test prediction):", 
+              json.dumps(response.json(), indent=2))
 
 if __name__ == "__main__":
     test_api() 

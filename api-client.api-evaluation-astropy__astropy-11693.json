@@ -6,23 +6,19 @@
     "unresolved_instances": 0,
     "empty_patch_instances": 0,
     "error_instances": 1,
-    "unstopped_instances": 1,
+    "unstopped_instances": 0,
     "completed_ids": [],
     "incomplete_ids": [],
     "empty_patch_ids": [],
     "submitted_ids": [
-        "sympy__sympy-24562"
+        "astropy__astropy-11693"
     ],
     "resolved_ids": [],
     "unresolved_ids": [],
     "error_ids": [
-        "sympy__sympy-24562"
+        "astropy__astropy-11693"
     ],
-    "unstopped_containers": [
-        "sweb.eval.sympy__sympy-24562.api-evaluation-sympy__sympy-24562"
-    ],
-    "unremoved_images": [
-        "sweb.eval.arm64.sympy__sympy-24562:latest"
-    ],
+    "unstopped_containers": [],
+    "unremoved_images": [],
     "schema_version": 2
 }
