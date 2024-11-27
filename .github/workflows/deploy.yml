@@ -1,0 +1,42 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Build container image
+        run: docker build -t registry.digitalocean.com/onsite-swebench/api:$(echo $GITHUB_SHA | head -c7) .
+
+      - name: Log in to DigitalOcean Container Registry
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push registry.digitalocean.com/onsite-swebench/api:$(echo $GITHUB_SHA | head -c7)
+
+      - name: Deploy to DigitalOcean Droplet
+        env:
+          PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_SSH_KEY }}
+          HOST: ${{ secrets.DIGITALOCEAN_HOST }}
+          USER: ${{ secrets.DIGITALOCEAN_USER }}
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER}@${HOST} "\
+            docker pull registry.digitalocean.com/onsite-swebench/api:$(echo $GITHUB_SHA | head -c7) && \
+            docker stop api-container || true && \
+            docker rm api-container || true && \
+            docker run -d --name api-container \
+              -p 80:8000 \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              --restart unless-stopped \
+              registry.digitalocean.com/onsite-swebench/api:$(echo $GITHUB_SHA | head -c7)"
