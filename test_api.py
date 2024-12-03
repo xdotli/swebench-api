@@ -40,7 +40,7 @@ The patch should be applicable to the base commit.
 Only include the git diff, no additional explanation."""
 
         completion = client.chat.completions.create(
-            model="gpt-4-turbo-preview",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a skilled software engineer. Provide patches in git diff format."},
                 {"role": "user", "content": prompt}
