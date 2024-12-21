@@ -159,4 +159,34 @@ class SWEBenchService:
                 }
                 
         finally:
-            os.unlink(predictions_path) 
+            os.unlink(predictions_path)
+
+if __name__ == "__main__":
+    swe_bench_service = SWEBenchService()
+    task_id = "astropy__astropy-11693"
+    prediction = """diff --git a/astropy/wcs/wcsapi/fitswcs.py b/astropy/wcs/wcsapi/fitswcs.py
+--- a/astropy/wcs/wcsapi/fitswcs.py
++++ b/astropy/wcs/wcsapi/fitswcs.py
+@@ -323,7 +323,17 @@ def pixel_to_world_values(self, *pixel_arrays):
+         return world[0] if self.world_n_dim == 1 else tuple(world)
+ 
+     def world_to_pixel_values(self, *world_arrays):
+-        pixel = self.all_world2pix(*world_arrays, 0)
++        # avoid circular import
++        from astropy.wcs.wcs import NoConvergence
++        try:
++            pixel = self.all_world2pix(*world_arrays, 0)
++        except NoConvergence as e:
++            warnings.warn(str(e))
++            # use best_solution contained in the exception and format the same
++            # way as all_world2pix does (using _array_converter)
++            pixel = self._array_converter(lambda *args: e.best_solution,
++                                         'input', *world_arrays, 0)
++
+         return pixel[0] if self.pixel_n_dim == 1 else tuple(pixel)
+ 
+     @property
+
+"""
+    evaluation_result = swe_bench_service.evaluate_prediction(task_id, prediction)
+    print(f"Evaluation result: {evaluation_result}")

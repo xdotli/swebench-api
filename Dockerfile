@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 python:3.12-slim
+FROM python:3.12-slim
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -23,6 +23,6 @@ RUN mkdir -p /app/cache && chmod 777 /app/cache
 # Create docker socket directory
 RUN mkdir -p /var/run && chmod 777 /var/run
 
-EXPOSE 8000
+EXPOSE 8002
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8002"]
