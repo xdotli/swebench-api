@@ -1,11 +1,11 @@
 version: '3.8'
 services:
-  api:
+  v1:
     build: 
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8002:8002"
     volumes:
       - ./app:/app/app
       - /var/run/docker.sock:/var/run/docker.sock
