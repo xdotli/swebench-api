@@ -6,3 +6,12 @@ __pycache__
 .pytest_cache
 .coverage
 htmlcov
+*.json
+docker-compose.yml
+docker-compose
+Dockerfile
+backlog.md
+README.md
+images
+.DS_Store
+.dockerignore
