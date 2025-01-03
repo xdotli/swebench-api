@@ -7,8 +7,8 @@ import tiktoken
 import numpy as np
 from datasets import load_dataset
 
-# BASE_URL = "http://localhost:8002"
-BASE_URL = "http://ec2-3-232-182-160.compute-1.amazonaws.com:8002"
+BASE_URL = "http://localhost:8002"
+# BASE_URL = "http://ec2-3-232-182-160.compute-1.amazonaws.com:8002"
 
 
 def call_api(model_name_or_path, inputs, temperature, top_p, **model_args):

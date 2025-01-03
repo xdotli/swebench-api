@@ -111,8 +111,8 @@ class SWEBenchService:
             predictions_path = f.name
 
         try:
-            run_id = f"api-evaluation-{task_id}"
-            result_file = f"{run_id}.json"
+            run_id = f"api-client-evaluation-{task_id}"
+            result_file = f"api-client.{run_id}.json"
             
             cmd = [
                 "python3", "-m", "swebench.harness.run_evaluation",
@@ -133,7 +133,7 @@ class SWEBenchService:
                 env=env,
                 cwd="."  # Ensure we're in the correct directory
             )
-            
+
             print(f"Command output: {result.stdout}")
             print(f"Command error: {result.stderr}")
             
@@ -148,10 +148,11 @@ class SWEBenchService:
                 
                 return {
                     "task_id": task_id,
-                    "is_resolved": evaluation_result.get("resolved", False),
+                    "is_resolved": bool(evaluation_result.get("resolved_ids")),
                     "test_results": evaluation_result
                 }
             else:
+                print(f"Evaluation result file not found: {result_file}")
                 return {
                     "task_id": task_id,
                     "is_resolved": False,
@@ -159,7 +160,19 @@ class SWEBenchService:
                 }
                 
         finally:
-            os.unlink(predictions_path)
+            if os.path.exists(predictions_path):
+                os.unlink(predictions_path)
+
+            # Clean up logs directory
+            if logs_dir.exists() and logs_dir.is_dir():
+                import shutil
+                shutil.rmtree(logs_dir)
+                print(f"Removed logs directory: {logs_dir}")
+
+            # Clean up result file if it exists
+            if os.path.exists(result_file):
+                os.remove(result_file)
+                print(f"Removed result file: {result_file}")
 
 if __name__ == "__main__":
     swe_bench_service = SWEBenchService()
