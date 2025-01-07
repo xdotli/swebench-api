@@ -98,6 +98,8 @@ class SWEBenchService:
         # Create logs directory if it doesn't exist
         logs_dir = Path("./logs/run_evaluation")
         logs_dir.mkdir(parents=True, exist_ok=True)
+
+        print("Getting prediction:", prediction)
         
         # Create a temporary file to store the prediction
         with tempfile.NamedTemporaryFile(mode='w', suffix='.jsonl', delete=False) as f:
@@ -145,12 +147,21 @@ class SWEBenchService:
                 with open(result_file) as f:
                     evaluation_result = json.load(f)
                 os.remove(result_file)
-                
-                return {
+                is_resovled = bool(evaluation_result.get("resolved_ids"))
+                if is_resovled:
+                    return {
                     "task_id": task_id,
-                    "is_resolved": bool(evaluation_result.get("resolved_ids")),
+                    "is_resolved": is_resovled,
+                    "error_message": None,
                     "test_results": evaluation_result
                 }
+                else:
+                    return {
+                        "task_id": task_id,
+                        "is_resolved": is_resovled,
+                        "error_message": f"Task failed: {evaluation_result}",
+                        "test_results": evaluation_result
+                    }
             else:
                 print(f"Evaluation result file not found: {result_file}")
                 return {

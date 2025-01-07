@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, Optional, Dict, Any
 
 class TaskResponse(BaseModel):
@@ -12,8 +12,8 @@ class EvaluationRequest(BaseModel):
     task_id: str
     prediction: str
     
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "task_id": "sympy__sympy-24562",
                 "prediction": """diff --git a/file.py b/file.py
@@ -24,6 +24,7 @@ class EvaluationRequest(BaseModel):
 +new line"""
             }
         }
+    )
 
 class BatchEvaluationRequest(BaseModel):
     predictions: List[EvaluationRequest]
@@ -35,4 +36,4 @@ class EvaluationResponse(BaseModel):
     test_results: Optional[Dict[str, Any]] = None
 
 class BatchTaskRequest(BaseModel):
-    task_ids: List[str] 
+    task_ids: List[str]

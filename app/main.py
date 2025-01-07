@@ -6,7 +6,8 @@ from .routers import benchmark
 app = FastAPI(
     title="SWE-bench API",
     description="API for serving and evaluating SWE-bench tasks",
-    version="1.0.0"
+    version="1.0.0",
+    debug=True,
 )
 
 # Add CORS middleware
