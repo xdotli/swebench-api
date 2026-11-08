@@ -3,7 +3,7 @@ import { cleanup } from "@testing-library/react";
 import { server } from "#/mocks/node";
 import "@testing-library/jest-dom/vitest";
 
-// @ts-expect-error - Mock for Terminal tests
+// Mock for Terminal tests
 HTMLCanvasElement.prototype.getContext = vi.fn();
 
 // Mock the i18n provider

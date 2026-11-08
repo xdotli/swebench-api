@@ -90,8 +90,9 @@ export default defineConfig(({ mode }) => {
     clearScreen: false,
     test: {
       environment: "jsdom",
+      pool: "threads",
       setupFiles: ["vitest.setup.ts"],
-      reporters: "basic",
+      reporters: [["default", { summary: false }]],
       exclude: [...configDefaults.exclude, "tests"],
       coverage: {
         reporter: ["text", "json", "html", "lcov", "text-summary"],
