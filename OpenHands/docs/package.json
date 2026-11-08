@@ -15,10 +15,10 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.6.2",
-    "@docusaurus/plugin-content-pages": "^3.6.2",
-    "@docusaurus/preset-classic": "^3.6.2",
-    "@docusaurus/theme-mermaid": "^3.6.2",
+    "@docusaurus/core": "^3.10.2",
+    "@docusaurus/plugin-content-pages": "^3.10.2",
+    "@docusaurus/preset-classic": "^3.10.2",
+    "@docusaurus/theme-mermaid": "^3.10.2",
     "@mdx-js/react": "^3.1.0",
     "clsx": "^2.0.0",
     "prism-react-renderer": "^2.4.0",
@@ -28,9 +28,9 @@
     "react-use": "^17.5.1"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.5.1",
-    "@docusaurus/tsconfig": "^3.6.2",
-    "@docusaurus/types": "^3.5.1",
+    "@docusaurus/module-type-aliases": "^3.10.2",
+    "@docusaurus/tsconfig": "^3.10.2",
+    "@docusaurus/types": "^3.10.2",
     "typescript": "~5.6.3"
   },
   "browserslist": {
@@ -46,6 +46,20 @@
     ]
   },
   "engines": {
-    "node": ">=18.0"
+    "node": ">=20.0"
+  },
+  "overrides": {
+    "mermaid": "^11.17.2",
+    "tinypool": "^2.2.0",
+    "serialize-javascript": "^7.0.5",
+    "sockjs": {
+      "uuid": "^11.1.1"
+    }
+  },
+  "resolutions": {
+    "mermaid": "^11.17.2",
+    "tinypool": "^2.2.0",
+    "serialize-javascript": "^7.0.5",
+    "**/sockjs/uuid": "^11.1.1"
   }
 }

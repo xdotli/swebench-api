@@ -1,6 +1,5 @@
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { render } from "@testing-library/react";
-import { afterEach } from "node:test";
 import { useTerminal } from "#/hooks/useTerminal";
 import { Command } from "#/state/commandSlice";
 import { WsClientProvider } from "#/context/ws-client-provider";
@@ -43,16 +42,20 @@ describe("useTerminal", () => {
 
   beforeAll(() => {
     // mock ResizeObserver
-    window.ResizeObserver = vi.fn().mockImplementation(() => ({
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: vi.fn(),
-    }));
+    window.ResizeObserver = vi.fn().mockImplementation(function ResizeObserver() {
+      return {
+        observe: vi.fn(),
+        unobserve: vi.fn(),
+        disconnect: vi.fn(),
+      };
+    });
 
     // mock Terminal
     vi.mock("@xterm/xterm", async (importOriginal) => ({
       ...(await importOriginal<typeof import("@xterm/xterm")>()),
-      Terminal: vi.fn().mockImplementation(() => mockTerminal),
+      Terminal: vi.fn().mockImplementation(function Terminal() {
+        return mockTerminal;
+      }),
     }));
   });
 
@@ -101,13 +104,10 @@ describe("useTerminal", () => {
       },
     );
 
-    // BUG: `vi.clearAllMocks()` does not clear the number of calls
-    // therefore, we need to assume the order of the calls based
-    // on the test order
     expect(mockTerminal.writeln).toHaveBeenNthCalledWith(
-      3,
+      1,
       `export GITHUB_TOKEN=${"*".repeat(10)},${"*".repeat(10)},${"*".repeat(10)}`,
     );
-    expect(mockTerminal.writeln).toHaveBeenNthCalledWith(4, "*".repeat(10));
+    expect(mockTerminal.writeln).toHaveBeenNthCalledWith(2, "*".repeat(10));
   });
 });

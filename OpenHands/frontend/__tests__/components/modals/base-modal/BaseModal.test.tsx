@@ -6,11 +6,11 @@ import BaseModal from "#/components/modals/base-modal/BaseModal";
 describe("BaseModal", () => {
   it("should render if the modal is open", () => {
     const { rerender } = render(
-      <BaseModal isOpen={false} onOpenChange={vi.fn} title="Settings" />,
+      <BaseModal isOpen={false} onOpenChange={vi.fn()} title="Settings" />,
     );
     expect(screen.queryByText("Settings")).not.toBeInTheDocument();
 
-    rerender(<BaseModal title="Settings" onOpenChange={vi.fn} isOpen />);
+    rerender(<BaseModal title="Settings" onOpenChange={vi.fn()} isOpen />);
     expect(screen.getByText("Settings")).toBeInTheDocument();
   });
 
@@ -18,7 +18,7 @@ describe("BaseModal", () => {
     render(
       <BaseModal
         isOpen
-        onOpenChange={vi.fn}
+        onOpenChange={vi.fn()}
         title="Settings"
         subtitle="Subtitle"
       />,
@@ -43,7 +43,7 @@ describe("BaseModal", () => {
     render(
       <BaseModal
         isOpen
-        onOpenChange={vi.fn}
+        onOpenChange={vi.fn()}
         title="Settings"
         actions={[primaryAction, secondaryAction]}
       />,
@@ -88,7 +88,7 @@ describe("BaseModal", () => {
 
   it("should render children", () => {
     render(
-      <BaseModal isOpen onOpenChange={vi.fn} title="Settings">
+      <BaseModal isOpen onOpenChange={vi.fn()} title="Settings">
         <div>Children</div>
       </BaseModal>,
     );
@@ -99,7 +99,7 @@ describe("BaseModal", () => {
     const { rerender } = render(
       <BaseModal
         isOpen
-        onOpenChange={vi.fn}
+        onOpenChange={vi.fn()}
         title="Settings"
         actions={[
           {
@@ -116,7 +116,7 @@ describe("BaseModal", () => {
     rerender(
       <BaseModal
         isOpen
-        onOpenChange={vi.fn}
+        onOpenChange={vi.fn()}
         title="Settings"
         actions={[
           {

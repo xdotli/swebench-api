@@ -21,7 +21,7 @@ Note:
 import base64
 
 import docx
-import PyPDF2
+import pypdf
 from pptx import Presentation
 from pylatexenc.latex2text import LatexNodes2Text
 
@@ -41,7 +41,7 @@ def parse_pdf(file_path: str) -> None:
         file_path: str: The path to the file to open.
     """
     print(f'[Reading PDF file from {file_path}]')
-    content = PyPDF2.PdfReader(file_path)
+    content = pypdf.PdfReader(file_path)
     text = ''
     for page_idx in range(len(content.pages)):
         text += (
